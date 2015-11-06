@@ -1,0 +1,58 @@
+gcc
+GNU make
+gdb
+valgrind
+kcachegrind
+The difference between Static analysis and Dynamic analysis is as follows:
+source code or Executable code
+detecting potential or actual issues
+analysis all code or executed code only
+independent or dependent on program inputs
+Limited to provable or runtime issues
+
+Download the pdf file and read the work. Here are the answers. If you have any questions, please email: fwangboulder@gmail.com
+***************part 1*****************************
+make
+gdb pi
+try ./pi 1000 at step 2 : it gives segmentation fault
+
+try r  and it gives error
+
+Check pi.c , it turns out to be the memory allocate problem.
+
+memory allocate at calculating pi
+pt = malloc(sizeof(*pt));
+
+b zeroDist
+generate the zeroDist break
+clear zeroDist
+clear the break point name
+b 43 generate the breakpoint at line 43
+
+quit
+quit the gdb
+************************part 2***********************
+valgrind --leak-check=yes ./pi
+get an error , the reason is that we did not free the memory of zero
+free(zero_pt)
+free(pt)
+
+***********************part 3***********************
+/usr/bin/time ./pi
+
+the time is around 0.06s 1000000 iterations
+
+to make it take ~1s realtime, try 13380000 iterations (0.95)
+generate a callgrind profile
+valgrind --tool=callgrind ./pi 13380000
+open the resulting profile
+kcachegrind  callgrind.out.22774
+zeroDist 71.24 (dist(pi:pi.c))
+dist     28.81 (pow(libm-2.19.so:w_pow.c,...)
+pow      21.02
+malloc   18.88  (_int_malloc)
+rand     18.28
+Change the double type to float type the time drop from 0.95 to 0.82
+get rid of pow(), the time drop from 0.82s to 0.75s with the same iterations
+Well, you can do more to make the program run faster basing on the memory percentage. For example, for such a simple program, you do not need to use pointer and you can write all the code in the main function.In this way, your rogram can run even faster (less than 0.5s with the same iterations).
+However, in real industry, for big package of program, you need to watch out both neatness of your program(easy for other people to understand) and how fast your program runs.
